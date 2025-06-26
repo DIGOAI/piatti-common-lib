@@ -13,7 +13,10 @@
     "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run build",
     "clean": "rimraf dist .tsbuildinfo",
-    "build:clean": "npm run clean && npm run build"
+    "build:clean": "npm run clean && npm run build",
+    "version:patch": "npm version patch --message \"🔖 Patch version to `v%s`\"",
+    "version:minor": "npm version minor --message \"🔖 Minor version to `v%s`\"",
+    "version:major": "npm version major --message \"🔖 Major version to `v%s`\""
   },
   "keywords": [
     "nestjs",
