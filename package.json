@@ -1,16 +1,43 @@
 {
   "name": "piatti-common-lib",
   "version": "1.0.0",
-  "description": "",
+  "description": "Librería común para proyectos NestJS con módulos reutilizables y servicios para facilitar el desarrollo de aplicaciones",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "package.json"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build",
+    "clean": "rimraf dist",
+    "build:clean": "npm run clean && npm run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "sideEffects": "false",
+  "keywords": [
+    "nestjs",
+    "microservices",
+    "transport",
+    "nats",
+    "redis",
+    "common-library",
+    "piatti"
+  ],
+  "author": "Scoowy <gahonajuanjo@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DIGOAI/piatti-common-lib.git"
+  },
+  "homepage": "https://github.com/DIGOAI/piatti-common-lib#readme",
+  "bugs": {
+    "url": "https://github.com/DIGOAI/piatti-common-lib/issues"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
@@ -20,6 +47,7 @@
     "eslint": "^9.18.0",
     "globals": "^16.0.0",
     "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
     "tsconfig-paths": "^4.2.0",
     "typescript-eslint": "^8.20.0",
     "typescript": "^5.7.3"
