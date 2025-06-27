@@ -1,5 +1,5 @@
 {
-  "name": "piatti-common-lib",
+  "name": "@digoai/piatti-common",
   "version": "1.0.1",
   "description": "Librería común para proyectos NestJS con módulos reutilizables y servicios para facilitar el desarrollo de aplicaciones",
   "main": "dist/index.js",
