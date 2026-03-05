@@ -1,5 +1,6 @@
 import type { Params } from 'nestjs-pino';
 import { ulid } from 'ulid';
+import { getRequestId, setRequestId } from './logging.context';
 import { httpReqSerializer, httpResSerializer } from './logging.serializers';
 import type { LoggingModuleOptions } from './logging.types';
 
@@ -79,9 +80,17 @@ function createHttpConfig(options: LoggingModuleOptions): Params {
       // Generate unique request IDs
       genReqId: (req, res) => {
         const existingId = req.id ?? (req.headers['x-request-id'] as string);
-        if (existingId) return existingId;
+        if (existingId) {
+          // Store request ID in async context for microservice calls
+          // eslint-disable-next-line @typescript-eslint/no-base-to-string
+          setRequestId(String(existingId));
+          return existingId;
+        }
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         const id = ulid().slice(0, 10);
+        // Store request ID in async context
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        setRequestId(id);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         res.setHeader('X-Request-Id', id);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -96,6 +105,7 @@ function createHttpConfig(options: LoggingModuleOptions): Params {
  *
  * Uses basic logging without HTTP interceptors, suitable for message-based
  * microservices where there are no HTTP requests/responses.
+ * Includes request ID from async context in all logs for end-to-end tracing.
  */
 function createMicroserviceConfig(options: LoggingModuleOptions): Params {
   const baseConfig = createBaseConfig(options);
@@ -104,9 +114,13 @@ function createMicroserviceConfig(options: LoggingModuleOptions): Params {
     pinoHttp: {
       ...baseConfig,
       // Basic configuration without HTTP-specific features
-      customProps: () => ({
-        context: 'Microservice',
-      }),
+      customProps: () => {
+        const requestId = getRequestId();
+        return {
+          context: 'Microservice',
+          ...(requestId && { requestId }),
+        };
+      },
     },
   };
 }

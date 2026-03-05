@@ -7,11 +7,23 @@ Módulo global de logging para aplicaciones NestJS basado en Pino, diseñado sig
 - ✅ **Módulo Dinámico**: Configuración flexible mediante `forRoot()` y `forRootAsync()`
 - ✅ **Módulo Global**: Disponible en toda la aplicación sin necesidad de re-importar
 - ✅ **Adaptativo al Tipo de App**: Soporte para HTTP, microservicios (NATS/gRPC), e híbridos
+- ✅ **End-to-End Tracing**: Propagación automática de request-id desde Gateway a microservicios
 - ✅ **Request ID Tracking**: Generación automática de IDs únicos para cada request HTTP
 - ✅ **HTTP Logging**: Intercepta y registra automáticamente todas las peticiones HTTP (solo en modo HTTP)
 - ✅ **Serializers Personalizados**: Control sobre qué información se registra (seguridad)
 - ✅ **Pretty Print**: Formato legible para desarrollo
 - ✅ **Configuración Tipo-Segura**: TypeScript interfaces para todas las opciones
+
+## 🎯 Trazabilidad End-to-End
+
+Este módulo incluye soporte completo para rastrear peticiones desde el Gateway HTTP a través de todos los microservicios NATS:
+
+- 🔄 **Propagación Automática**: El request-id se incluye automáticamente en metadata NATS
+- 📝 **Logs Correlacionados**: Mismo request-id en logs del Gateway y microservicios
+- 🔍 **AsyncLocalStorage**: Acceso al request-id en cualquier parte del código
+- ⚡ **Zero Configuration**: Funciona automáticamente con `MessagingService`
+
+**[📖 Ver Guía Completa de Trazabilidad End-to-End](./END_TO_END_TRACING.md)**
 
 ## Instalación
 
@@ -187,31 +199,9 @@ export class AppModule {}
 
 ## Uso en Servicios
 
-### Inyección del Logger
+### Usar PinoLogger (Recomendado) ⭐
 
-```typescript
-import { Injectable, Logger } from '@nestjs/common';
-
-@Injectable()
-export class UserService {
-  private readonly logger = new Logger(UserService.name);
-
-  async createUser(userData: CreateUserDto) {
-    this.logger.log('Creating user', { userData });
-
-    try {
-      const user = await this.userRepository.create(userData);
-      this.logger.log('User created successfully', { userId: user.id });
-      return user;
-    } catch (error) {
-      this.logger.error('Failed to create user', error);
-      throw error;
-    }
-  }
-}
-```
-
-### Logger con Contexto
+**PinoLogger inyecta automáticamente el `requestId` en TODOS los logs**, tanto en HTTP como en microservicios:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
@@ -224,11 +214,58 @@ export class OrderService {
   }
 
   async processOrder(orderId: string) {
-    this.logger.info({ orderId }, 'Processing order');
-    // ... lógica de procesamiento
+    // ✨ requestId se inyecta automáticamente
+    this.logger.log('Processing order');
+    // Output: {"level":"INFO","requestId":"01HQWXYZ12","context":"OrderService","msg":"Processing order"}
+
+    try {
+      const order = await this.repository.findOne(orderId);
+      // ✅ RequestId automático en todos los logs
+      this.logger.log('Order processed successfully');
+      return order;
+    } catch (error) {
+      // ✅ RequestId automático incluso en errores
+      this.logger.error('Failed to process order', error);
+      throw error;
+    }
   }
 }
 ```
+
+### Usar Logger Estándar (Sin inyección automática)
+
+Si usas el `Logger` estándar de NestJS, debes pasar el `requestId` manualmente:
+
+```typescript
+import { Injectable, Logger } from '@nestjs/common';
+import { getRequestId } from '@piatti/common-lib';
+
+@Injectable()
+export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
+  async createUser(userData: CreateUserDto) {
+    const requestId = getRequestId();
+    this.logger.log('Creating user', { requestId, userData });
+
+    try {
+      const user = await this.userRepository.create(userData);
+      this.logger.log('User created successfully', {
+        requestId,
+        userId: user.id,
+      });
+      return user;
+    } catch (error) {
+      this.logger.error('Failed to create user', error);
+      throw error;
+    }
+  }
+}
+```
+
+**💡 Tip**: Usa `PinoLogger` para obtener inyección automática de `requestId` sin código adicional.
+
+**[📖 Ver Comparación Completa: Logger vs PinoLogger](./LOGGER_VS_PINOLOGGER.md)**
 
 ## Request ID Tracking
 
