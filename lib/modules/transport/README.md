@@ -15,7 +15,7 @@ This module provides an abstraction for configuring microservice transport clien
 ### Simple Configuration with NATS
 
 ```typescript
-import { TransportModule } from '@your-org/piatti-common-lib';
+import { TransportModule } from '@digoai/piatti-common';
 
 @Module({
   imports: [TransportModule.forNats(['nats://localhost:4222'])],
@@ -26,7 +26,7 @@ export class AppModule {}
 ### Simple Configuration with Redis
 
 ```typescript
-import { TransportModule } from '@your-org/piatti-common-lib';
+import { TransportModule } from '@digoai/piatti-common';
 
 @Module({
   imports: [TransportModule.forRedis('localhost', 6379)],
@@ -37,10 +37,7 @@ export class AppModule {}
 ### Advanced Configuration
 
 ```typescript
-import {
-  TransportModule,
-  TransportModuleOptions,
-} from '@your-org/piatti-common-lib';
+import { TransportModule, TransportModuleOptions } from '@digoai/piatti-common';
 import { Transport } from '@nestjs/microservices';
 
 const transportConfig: TransportModuleOptions = {
@@ -74,7 +71,7 @@ export class AppModule {}
 ### Asynchronous Configuration
 
 ```typescript
-import { TransportModule } from '@your-org/piatti-common-lib';
+import { TransportModule } from '@digoai/piatti-common';
 import { ConfigService } from '@nestjs/config';
 import { Transport } from '@nestjs/microservices';
 
@@ -174,10 +171,7 @@ With this implementation, you get:
 ### Example with Complete Typing
 
 ```typescript
-import {
-  TransportModule,
-  NatsTransportConfig,
-} from '@your-org/piatti-common-lib';
+import { TransportModule, NatsTransportConfig } from '@digoai/piatti-common';
 import { Transport } from '@nestjs/microservices';
 
 const natsConfig: NatsTransportConfig = {
@@ -232,7 +226,7 @@ export class AppModule {}
 Once you've configured the module, you can inject and use the `MessagingService`:
 
 ```typescript
-import { MessagingService } from '@your-org/piatti-common-lib';
+import { MessagingService } from '@digoai/piatti-common';
 
 @Injectable()
 export class MyService {
