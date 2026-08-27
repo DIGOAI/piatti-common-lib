@@ -5,6 +5,7 @@ This is a common library for projects that use `NestJS`. It provides reusable mo
 ## Features
 
 - [Transport Module](#transport-module): Abstraction for configuring microservice transport clients.
+- [Metrics Module](lib/modules/metrics/README.md): Prometheus instrumentation (HTTP + NATS) so every service can be scraped into a single Grafana dashboard.
 
 ## Transport Module
 
