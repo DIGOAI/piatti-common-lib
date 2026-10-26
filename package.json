@@ -52,7 +52,7 @@
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
     "@nestjs/core": "^11.0.0",
-    "@types/node": "^22.10.7",
+    "@types/node": "^24.19.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -73,5 +73,5 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.0"
   },
-  "packageManager": "pnpm@10.11.0"
+  "packageManager": "pnpm@11.28.8+sha512.f6988a32046b9a3f78d7d7ee0747926bbe905ff9dff73bf19abb87bd7d1906a2ac90d93f73be32b5f9e14c2899569bcb0c9c5ec8a19e083f5d71bbab6dd9e0b8"
 }
